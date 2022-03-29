@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 import './home.dart';
 import './signin.dart';
-
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  // Optional clientId
-  clientId:
-      '267142607446-ea4jh5etipmenei9apdnog59gg4jc8o9.apps.googleusercontent.com',
-  scopes: <String>['profile'],
-);
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -57,7 +49,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _getTokens();
     });
   }
@@ -66,7 +58,7 @@ class SplashScreenState extends State<SplashScreen> {
     accessToken = await storage.read(key: 'accessToken');
     refreshToken = await storage.read(key: 'refreshToken');
 
-    Timer(Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 2), () {
       if (refreshToken != null && accessToken != null) {
         Navigator.push(
           context,
