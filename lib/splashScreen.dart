@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 import './home.dart';
-import './signin.dart';
+import 'loadAccount.dart';
+import 'signIn.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -13,9 +14,9 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen> {
   final storage = new FlutterSecureStorage();
-  final String apiURL = 'http://10.0.2.2:3000/user/google-login';
   String? accessToken;
   String? refreshToken;
+  String? address;
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +58,12 @@ class SplashScreenState extends State<SplashScreen> {
   _getTokens() async {
     accessToken = await storage.read(key: 'accessToken');
     refreshToken = await storage.read(key: 'refreshToken');
+    address = await storage.read(key: 'address');
 
     Timer(const Duration(seconds: 2), () {
       if (refreshToken != null && accessToken != null) {
+        // if no address create/import account
+        // if (address != null) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -69,6 +73,14 @@ class SplashScreenState extends State<SplashScreen> {
             ),
           ),
         );
+        // } else {
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => LoadAccount(),
+        //     ),
+        //   );
+        // }
       } else {
         Navigator.push(
           context,

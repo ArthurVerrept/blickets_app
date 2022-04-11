@@ -1,4 +1,7 @@
+import 'package:blickets_app/responseTypes/walletKeys.dart';
 import 'package:flutter/material.dart';
+
+import 'helpers/request.dart';
 
 class Home extends StatefulWidget {
   final String accessToken;
@@ -14,6 +17,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List users = [];
+
+  Future<void> test() async {
+    try {
+      WalletKeys walletKeys = await post(
+        '/blockchain/create-ethereum-account',
+        returnType: WalletKeys.parseBody,
+      );
+      print(walletKeys);
+    } catch (error) {
+      print(error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +56,7 @@ class _HomeState extends State<Home> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            IconButton(icon: const Icon(Icons.home), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.home), onPressed: test),
             IconButton(
                 icon: const Icon(Icons.bookmark_outline), onPressed: () {}),
             IconButton(

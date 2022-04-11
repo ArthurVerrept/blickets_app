@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-class ApiTokens {
+class Tokens {
   final String accessToken;
   final String refreshToken;
 
-  const ApiTokens({
+  const Tokens({
     required this.accessToken,
     required this.refreshToken,
   });
 
-  factory ApiTokens.parseBody(String jsonString) {
+  factory Tokens.parseBody(String jsonString) {
     var json = jsonDecode(jsonString);
-    return ApiTokens(
+    return Tokens(
       accessToken: json['accessToken'],
       refreshToken: json['refreshToken'],
     );

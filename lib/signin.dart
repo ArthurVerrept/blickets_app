@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
-import './apiTokens.dart';
+import 'responseTypes/tokens.dart';
 import './home.dart';
+import 'helpers/request.dart';
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   // Optional clientId
@@ -23,13 +21,12 @@ class SignIn extends StatefulWidget {
   }
 }
 
-// todo: handle google permissions accept but api fail (revoke permissions)
-// todo: make sure if refresh token exists on phone it doesn't call google-authentication/login but just gets a new access token
-// todo: create wakeup for api on heroku
+// TODO: handle google permissions accept but api fail (revoke permissions)
+// TODO: make sure if refresh token exists on phone it doesn't call google-authentication/login but just gets a new access token
+// TODO: create wakeup for api on heroku
 
 class SignInState extends State<SignIn> {
   final storage = new FlutterSecureStorage();
-  final String apiURL = 'http://10.0.2.2:3000/user/google-login';
   String? accessToken;
   String? refreshToken;
 
@@ -42,8 +39,12 @@ class SignInState extends State<SignIn> {
         };
 
         try {
-          var tokensResponse = await http.post(Uri.parse(apiURL), body: body);
-          var tokens = ApiTokens.parseBody(tokensResponse.body);
+          Tokens tokens = await post(
+            '/user/google-login',
+            returnType: Tokens.parseBody,
+            body: body,
+          );
+
           await storage.write(
             key: 'accessToken',
             value: tokens.accessToken == null ? null : tokens.accessToken,
@@ -68,10 +69,9 @@ class SignInState extends State<SignIn> {
           await _googleSignIn.signOut();
         }
       } else {
-        // todo: handle no auth code bey error-ing
+        // TODO: handle no auth code bey error-ing
       }
     } catch (error) {
-      print('fail');
       print(error);
     }
   }
