@@ -6,6 +6,11 @@ import '../responseTypes/error.dart';
 
 final storage = new FlutterSecureStorage();
 
+enum Methods {
+  post,
+  get,
+}
+
 Future post(String endpoint,
     {dynamic returnType, Map<String, String>? headers, Object? body}) async {
   const String apiURL = 'http://10.0.2.2:3000';
@@ -25,7 +30,7 @@ Future post(String endpoint,
       // if the error is about the access token expiring
       if (err.statusCode == 401 && err.message == "TokenExpiredError") {
         // hit the refresh token route
-        res = await refreshToken(endpoint, apiURL, body, http.post);
+        res = await refreshToken(Methods.post, endpoint, apiURL, body);
         return returnType(res.body);
       } else {
         // handle api error appropriately
@@ -63,15 +68,15 @@ Future get(String endpoint, dynamic parse,
 }
 
 Future refreshToken(
+  Methods method,
   String endpoint,
   String apiURL,
   Object? body,
-  Function method,
 ) async {
   var refreshToken = await storage.read(key: 'refreshToken');
 
   print('refreshing token');
-  var tokenRes = await method(
+  var tokenRes = await http.post(
     Uri.parse(apiURL + '/user/refresh-token'),
     headers: {'Authorization': 'Bearer ' + refreshToken!},
     body: body,
@@ -79,6 +84,7 @@ Future refreshToken(
   try {
     // try see if the refresh returned an error
     Error refreshErr = Error.parseBody(tokenRes.body);
+    // TODO: handle refresh error better
     return refreshErr;
   } catch (e) {
     // otherwise get the new access tokem
@@ -90,12 +96,18 @@ Future refreshToken(
       value: newAccessToken.accessToken,
     );
 
-    // send new request with new access token
-    var res = await method(
-      Uri.parse(apiURL + endpoint),
-      headers: {'Authorization': 'Bearer ' + newAccessToken.accessToken},
-      body: body,
-    );
-    return res;
+    if (method == Methods.post) {
+      // send new request with new access token
+      return await http.post(
+        Uri.parse(apiURL + endpoint),
+        headers: {'Authorization': 'Bearer ' + newAccessToken.accessToken},
+        body: body,
+      );
+    } else {
+      return await http.get(
+        Uri.parse(apiURL + endpoint),
+        headers: {'Authorization': 'Bearer ' + newAccessToken.accessToken},
+      );
+    }
   }
 }
