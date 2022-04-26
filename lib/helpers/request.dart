@@ -12,7 +12,7 @@ enum Methods {
 
 Future post(String endpoint,
     {dynamic returnType, Map<String, String>? headers, Object? body}) async {
-  const String apiURL = 'http://10.0.2.2:3000';
+  const String apiURL = 'http://192.168.1.37:3000';
 
   var accessToken = await storage.read(key: 'accessToken');
 

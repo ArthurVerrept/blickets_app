@@ -16,7 +16,6 @@ class LoadAccount extends StatefulWidget {
 
 class LoadAccountState extends State<LoadAccount> {
   final storage = new FlutterSecureStorage();
-  final String apiURL = 'http://10.0.2.2:3000/user/google-login';
   String? accessToken;
   String? refreshToken;
 

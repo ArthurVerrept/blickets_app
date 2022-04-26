@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -7,12 +9,7 @@ import 'responseTypes/tokens.dart';
 import './home.dart';
 import 'helpers/request.dart';
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  // Optional clientId
-  clientId:
-      '267142607446-ea4jh5etipmenei9apdnog59gg4jc8o9.apps.googleusercontent.com',
-  scopes: <String>['profile'],
-);
+
 
 class SignIn extends StatefulWidget {
   @override
@@ -31,8 +28,31 @@ class SignInState extends State<SignIn> {
   String? refreshToken;
 
   Future<void> _handleSignIn() async {
+    GoogleSignIn _googleSignIn;
+
+    if(Platform.isAndroid) {
+      _googleSignIn = GoogleSignIn(
+        // ClientId needs to be there for android, however for apple
+        // it is not needed to return a serverAuthCode
+        // for apple you need to follow the step on the flutter website
+        // AND you need to add SERVER_CLIENT_ID to the google-info.plist
+        clientId:
+            '267142607446-ea4jh5etipmenei9apdnog59gg4jc8o9.apps.googleusercontent.com',
+        // hostedDomain: "",
+        scopes: <String>['profile'],
+      );
+    }
+    else {
+      _googleSignIn = GoogleSignIn(
+        scopes: <String>['profile'],
+      );
+    }
+    
+
+  
     try {
       GoogleSignInAccount? googleAccount = await _googleSignIn.signIn();
+      print(googleAccount);
       if (googleAccount!.serverAuthCode != null) {
         Map<String, String> body = {
           'code': googleAccount.serverAuthCode!,

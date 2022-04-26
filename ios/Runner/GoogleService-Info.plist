@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>267142607446-ekp2se0otctq6ddsuq5aq4bl92rjabhd.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.267142607446-ekp2se0otctq6ddsuq5aq4bl92rjabhd</string>
+	<key>SERVER_CLIENT_ID</key>
+	<string>267142607446-ea4jh5etipmenei9apdnog59gg4jc8o9.apps.googleusercontent.com</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.blicketsApp</string>
+</dict>
+</plist>
