@@ -13,6 +13,7 @@ enum Methods {
 Future post(String endpoint,
     {dynamic returnType, Map<String, String>? headers, Object? body}) async {
   const String apiURL = 'http://192.168.1.37:3000';
+      print('in');
 
   var accessToken = await storage.read(key: 'accessToken');
 
@@ -21,7 +22,12 @@ Future post(String endpoint,
   if (headers is Map<String, String>) {
     headers.addAll({'Authorization': 'Bearer ' + accessToken!});
   } else {
-    headers = {'Authorization': 'Bearer ' + accessToken!};
+      // here we try to add the access token if there is one, otherwise we send empty headers.
+      try {
+        headers = {'Authorization': 'Bearer ' + accessToken!};
+      } catch (e) {
+        headers = {};
+      }
   }
 
   try {

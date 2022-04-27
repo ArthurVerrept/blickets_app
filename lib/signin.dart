@@ -64,6 +64,7 @@ class SignInState extends State<SignIn> {
             returnType: Tokens.parseBody,
             body: body,
           );
+          print(tokens);
 
           await storage.write(
             key: 'accessToken',
