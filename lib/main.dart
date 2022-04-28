@@ -19,10 +19,10 @@ class MyApp extends StatelessWidget {
         primaryColor: const Color(0xffFCFCFC),
         iconTheme: const IconThemeData(
           size: 30,
-          color: Color(0xffFCFCFC),
+          color: Color(0xff111827),
         ),
         bottomAppBarTheme: const BottomAppBarTheme(
-          color: Color(0xffE43C4A),
+          color: Color(0xffFCFCFC),
         ),
         appBarTheme: const AppBarTheme(
           centerTitle: true,

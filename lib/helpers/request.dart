@@ -4,17 +4,16 @@ import '../responseTypes/accessToken.dart';
 import '../responseTypes/error.dart';
 
 final storage = new FlutterSecureStorage();
+const String apiURL = 'http://192.168.1.37:3000';
 
 enum Methods {
   post,
   get,
 }
 
+
 Future post(String endpoint,
     {dynamic returnType, Map<String, String>? headers, Object? body}) async {
-  const String apiURL = 'http://192.168.1.37:3000';
-      print('in');
-
   var accessToken = await storage.read(key: 'accessToken');
 
   // check if headers are present, if they are add
@@ -70,8 +69,6 @@ Future get(
   dynamic returnType,
   required Map<String, String>? headers,
 }) async {
-  const String apiURL = 'http://10.0.2.2:3000';
-
   var accessToken = await storage.read(key: 'accessToken');
 
   // check if headers are present, if they are add
@@ -81,6 +78,7 @@ Future get(
   } else {
     headers = {'Authorization': 'Bearer ' + accessToken!};
   }
+
 
   try {
     var res = await http.get(

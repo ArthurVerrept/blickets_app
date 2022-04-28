@@ -1,5 +1,8 @@
+import 'package:blickets_app/responseTypes/myEvents.dart';
 import 'package:blickets_app/responseTypes/walletKeys.dart';
+import 'package:blickets_app/widgets/ticket.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 import 'helpers/request.dart';
 
@@ -17,14 +20,17 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List users = [];
+  String myEventsString = '';
+  EventList? myEvents;
+  bool loading = true;
 
   Future<void> test() async {
     try {
-      WalletKeys walletKeys = await post(
-        '/blockchain/create-ethereum-account',
-        returnType: WalletKeys.parseBody,
-      );
-      print(walletKeys);
+      // WalletKeys walletKeys = await post(
+      //   '/blockchain/create-ethereum-account',
+      //   returnType: WalletKeys.parseBody,
+      // );
+
     } catch (error) {
       print(error);
     }
@@ -56,22 +62,71 @@ class _HomeState extends State<Home> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            IconButton(icon: const Icon(Icons.home), onPressed: test),
             IconButton(
-                icon: const Icon(Icons.bookmark_outline), onPressed: () {}),
+              icon: const Icon(Icons.home),
+              onPressed: test,
+              padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+            ),
             IconButton(
-                icon: const Icon(Icons.account_balance_wallet),
-                onPressed: () {}),
+              icon: const Icon(Icons.bookmark_outline),
+              onPressed: () {},
+              padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+            ),
+            IconButton(
+              icon: const Icon(Icons.account_balance_wallet),
+              onPressed: () {},
+              padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+            )
           ],
         ),
       ),
       body: Container(
         width: double.infinity,
-        height: double.infinity,
-        child: Center(
-          child: Text('widget.album.title'),
+        child: Column(
+          children: [
+            loading == false
+                ? Container(
+                    width: double.infinity,
+                    height: 300,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent)),
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      fit: StackFit.loose,
+                      children: List.generate(myEvents!.events.length, (index) {
+                        return Positioned(
+                          top: double.parse(index.toString()) * 20,
+                          // : EdgeInsets.only(top: double.parse(index.toString())),
+                          child: TicketWidget(event: myEvents!.events[index]),
+                        );
+                      }),
+                    ),
+                  )
+                : Text('loading'),
+            // Image.network('https://picsum.photos/250?image=9'),
+            // child: Card(
+            // ),
+          ],
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    doSomeAsyncStuff();
+  }
+
+  Future<void> doSomeAsyncStuff() async {
+    EventList myEventsRes = await get(
+      '/blockchain/my-events',
+      returnType: EventList.parseBody,
+      headers: {},
+    );
+    setState(() {
+      myEvents = myEventsRes;
+      loading = false;
+    });
   }
 }
