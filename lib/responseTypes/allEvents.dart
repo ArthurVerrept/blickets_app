@@ -1,49 +1,52 @@
 import 'dart:convert';
 
-class UserEvent {
-  final String contractAddress;
-  final String eventDate;
+class Event {
   final String eventName;
   final String symbol;
+  final String imageUrl;
+  final String contractAddress;
+  final String eventDate;
+  final String ticketPrice;
   final String ticketAmount;
-  final String ticketNumber;
-  final String tokenURI;
+  final String ticketIdCounter;
 
-  const UserEvent({
-    required this.contractAddress,
-    required this.eventDate,
+  const Event({
     required this.eventName,
     required this.symbol,
+    required this.imageUrl,
+    required this.contractAddress,
+    required this.eventDate,
+    required this.ticketPrice,
     required this.ticketAmount,
-    required this.ticketNumber,
-    required this.tokenURI,
+    required this.ticketIdCounter,
   });
 
-  static UserEvent fromJson(json) {
-    return UserEvent(
+  static Event fromJson(json) {
+    return Event(
       contractAddress: json['contractAddress'],
       eventDate: json['eventDate'],
       eventName: json['eventName'],
       symbol: json['symbol'],
+      ticketPrice: json['ticketPrice'],
       ticketAmount: json['ticketAmount'],
-      ticketNumber: json['ticketNumber'],
-      tokenURI: json['tokenURI'],
+      ticketIdCounter: json['ticketIdCounter'],
+      imageUrl: json['imageUrl'],
     );
   }
 }
 
-class EventList {
-  final List<UserEvent> events;
+class AllEventList {
+  final List<Event> events;
 
-  const EventList({
+  const AllEventList({
     required this.events,
   });
 
-  factory EventList.parseBody(String jsonString) {
+  factory AllEventList.parseBody(String jsonString) {
     dynamic l = json.decode(jsonString);
-    List<UserEvent> posts = List<UserEvent>.from(
-        l['events'].map((model) => UserEvent.fromJson(model)));
-    return EventList(events: posts);
+    List<Event> posts =
+        List<Event>.from(l['events'].map((model) => Event.fromJson(model)));
+    return AllEventList(events: posts);
   }
 }
 

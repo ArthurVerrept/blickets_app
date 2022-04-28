@@ -9,8 +9,6 @@ import 'responseTypes/tokens.dart';
 import './home.dart';
 import 'helpers/request.dart';
 
-
-
 class SignIn extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -30,7 +28,7 @@ class SignInState extends State<SignIn> {
   Future<void> _handleSignIn() async {
     GoogleSignIn _googleSignIn;
 
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       _googleSignIn = GoogleSignIn(
         // ClientId needs to be there for android, however for apple
         // it is not needed to return a serverAuthCode
@@ -41,15 +39,12 @@ class SignInState extends State<SignIn> {
         // hostedDomain: "",
         scopes: <String>['profile'],
       );
-    }
-    else {
+    } else {
       _googleSignIn = GoogleSignIn(
         scopes: <String>['profile'],
       );
     }
-    
 
-  
     try {
       GoogleSignInAccount? googleAccount = await _googleSignIn.signIn();
       print(googleAccount);

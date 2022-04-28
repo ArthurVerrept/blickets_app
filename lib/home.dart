@@ -1,5 +1,8 @@
+import 'package:blickets_app/responseTypes/allEvents.dart';
+import 'package:blickets_app/responseTypes/imageLink.dart';
 import 'package:blickets_app/responseTypes/myEvents.dart';
 import 'package:blickets_app/responseTypes/walletKeys.dart';
+import 'package:blickets_app/widgets/event.dart';
 import 'package:blickets_app/widgets/ticket.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
@@ -21,7 +24,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List users = [];
   String myEventsString = '';
-  EventList? myEvents;
+  List<UserEvent>? myEvents;
+  List<Event>? allEvents;
   bool loading = true;
 
   Future<void> test() async {
@@ -43,7 +47,7 @@ class _HomeState extends State<Home> {
         leading: const Center(
           child: Text(
             'profile',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Color(0xff323232)),
           ),
         ),
         title: const Text('Blickets'),
@@ -65,47 +69,112 @@ class _HomeState extends State<Home> {
             IconButton(
               icon: const Icon(Icons.home),
               onPressed: test,
-              padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+              padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
             ),
             IconButton(
               icon: const Icon(Icons.bookmark_outline),
               onPressed: () {},
-              padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+              padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
             ),
             IconButton(
               icon: const Icon(Icons.account_balance_wallet),
               onPressed: () {},
-              padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+              padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
             )
           ],
         ),
       ),
       body: Container(
         width: double.infinity,
-        child: Column(
+        child: ListView(
+          scrollDirection: Axis.vertical,
           children: [
             loading == false
                 ? Container(
                     width: double.infinity,
-                    height: 300,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blueAccent)),
-                    child: Stack(
-                      alignment: AlignmentDirectional.center,
-                      fit: StackFit.loose,
-                      children: List.generate(myEvents!.events.length, (index) {
-                        return Positioned(
-                          top: double.parse(index.toString()) * 20,
-                          // : EdgeInsets.only(top: double.parse(index.toString())),
-                          child: TicketWidget(event: myEvents!.events[index]),
-                        );
-                      }),
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: AlignmentDirectional.centerStart,
+                          padding: const EdgeInsets.only(left: 25, top: 10),
+                          child: const Text(
+                            'My Tickets',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                              color: Color(0xff323232),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 230,
+                          child: Stack(
+                            alignment: AlignmentDirectional.center,
+                            children: List.generate(myEvents!.length, (index) {
+                              return Positioned(
+                                top: double.parse(index.toString()) * 15 - 15,
+                                // : EdgeInsets.only(top: double.parse(index.toString())),
+                                child: TicketWidget(event: myEvents![index]),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
                   )
-                : Text('loading'),
-            // Image.network('https://picsum.photos/250?image=9'),
-            // child: Card(
-            // ),
+                : const Text('loading'),
+            loading == false
+                ? Container(
+                    child: Container(
+                      alignment: AlignmentDirectional.centerStart,
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(left: 25),
+                            child: Column(
+                              children: const [
+                                Text(
+                                  'Events',
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                    color: Color(0xff323232),
+                                  ),
+                                ),
+                                Text(
+                                  'Upcoming',
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Color(0xff323232),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 300,
+                            child: ListView(
+                              padding: EdgeInsets.only(left: 25),
+                              scrollDirection: Axis.horizontal,
+                              children:
+                                  List.generate(allEvents!.length, (index) {
+                                // : EdgeInsets.only(top: double.parse(index.toString())),
+                                return EventWidget(event: allEvents![index]);
+                              }),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : const Text('loading')
           ],
         ),
       ),
@@ -124,8 +193,21 @@ class _HomeState extends State<Home> {
       returnType: EventList.parseBody,
       headers: {},
     );
+
+    AllEventList allEventsRes = await get(
+      '/event/all-events',
+      returnType: AllEventList.parseBody,
+      headers: {},
+    );
+
     setState(() {
-      myEvents = myEventsRes;
+      myEvents = myEventsRes.events.sublist(0, 4);
+      if (allEventsRes.events.length > 10) {
+        allEvents = allEventsRes.events.sublist(0, 10);
+      } else {
+        allEvents = allEventsRes.events;
+      }
+
       loading = false;
     });
   }

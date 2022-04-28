@@ -1,38 +1,38 @@
-import 'package:blickets_app/responseTypes/myEvents.dart';
+import 'package:blickets_app/responseTypes/allEvents.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 import '../responseTypes/imageLink.dart';
 
-class TicketWidget extends StatefulWidget {
-  final UserEvent event;
-  TicketWidget({Key? key, required this.event}) : super(key: key);
+class EventWidget extends StatefulWidget {
+  final Event event;
+  EventWidget({Key? key, required this.event}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _TicketWidgetState();
+    return _EventWidgetState();
   }
 }
 
-class _TicketWidgetState extends State<TicketWidget> {
-  ImageProvider<Object> image = const AssetImage('lib/assets/images/grey.jpeg');
+class _EventWidgetState extends State<EventWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15),
-      width: MediaQuery.of(context).size.width - 50,
-      height: 150,
-      margin: EdgeInsets.only(top: 30),
+      clipBehavior: Clip.antiAlias,
+      padding: const EdgeInsets.all(15),
+      width: 300,
+      height: 300,
+      margin: const EdgeInsets.only(top: 15, right: 12.5),
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 47, 47, 47),
         image: DecorationImage(
-          image: image,
+          image: NetworkImage(widget.event.imageUrl),
           fit: BoxFit.cover,
           opacity: 0.6,
         ),
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
+        // borderRadius: BorderRadius.all(
+        //   Radius.circular(10),
+        // ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +50,7 @@ class _TicketWidgetState extends State<TicketWidget> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 2),
+                padding: EdgeInsets.only(top: 6),
                 child: Text(
                   '(' + widget.event.symbol + ')',
                   style: const TextStyle(
@@ -62,7 +62,7 @@ class _TicketWidgetState extends State<TicketWidget> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 2),
+                padding: EdgeInsets.only(top: 6),
                 child: Text(
                   'Date: ' + getDate(widget.event.eventDate),
                   style: const TextStyle(
@@ -73,31 +73,11 @@ class _TicketWidgetState extends State<TicketWidget> {
                   ),
                 ),
               ),
-            ],
-          ),
-          Column(
-            children: [
               Container(
-                padding: EdgeInsets.only(top: 30),
-                alignment: AlignmentDirectional.bottomCenter,
-                child: const Text(
-                  'Ticket Number',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 2),
-                alignment: AlignmentDirectional.bottomCenter,
+                padding: EdgeInsets.only(top: 6),
                 child: Text(
-                  '#' +
-                      widget.event.ticketNumber +
-                      ' of ' +
-                      widget.event.ticketAmount,
+                  'Ether: ' +
+                      double.parse(widget.event.ticketPrice).toStringAsFixed(6),
                   style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.bold,
@@ -116,16 +96,6 @@ class _TicketWidgetState extends State<TicketWidget> {
   @override
   void initState() {
     super.initState();
-    doSomeAsyncStuff();
-  }
-
-  Future<void> doSomeAsyncStuff() async {
-    final res = await http.get(Uri.parse(widget.event.tokenURI));
-    ImageLink imgLink = ImageLink.parseBody(res.body);
-
-    setState(() {
-      image = NetworkImage(imgLink.image);
-    });
   }
 }
 
